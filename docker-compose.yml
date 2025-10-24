@@ -12,6 +12,7 @@ services:
       - "8080:80"   # Host port 8080 -> container port 80
     volumes:
       - ${CONFIG}/web:/config:Z
+      - ./custom-config/config.js:/usr/share/jitsi-meet/config.js:ro
       - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
       # OPTIONAL (dev only): mount jitsi-meet for live edits - comment out for production
       # - ./jitsi-meet:/usr/share/jitsi-meet:Z
@@ -81,7 +82,9 @@ services:
       - AUTH_TYPE=${AUTH_TYPE}
 
       - JICOFO_ENABLE_HEALTH_CHECKS=true
-      - JICOFO_MAX_INACTIVE_ENDPOINTS=0
+      - JICOFO_MAX_INACTIVE_ENDPOINTS=30
+      - JICOFO_MAX_INACTIVE_SECONDS=300
+      - JICOFO_BRIDGE_SELECTION_TIMEOUT=10000
     depends_on:
       - prosody
     networks:
@@ -95,13 +98,25 @@ services:
       - "8081:8080"
     volumes:
       - ${CONFIG}/jvb:/config:Z
+      # - /home/ubuntu/jitsi-production-001/config/jvb:/config:Z
     environment:
       - JVB_AUTH_USER=${JVB_AUTH_USER}
       - JVB_AUTH_PASSWORD=${JVB_AUTH_PASSWORD}
-      - JVB_STUN_SERVERS=${JVB_STUN_SERVERS}
+      # - JVB_STUN_SERVERS=${JVB_STUN_SERVERS}
       - JVB_AUTH_DOMAIN=${JVB_AUTH_DOMAIN}
       - JVB_PORT=${JVB_PORT}
       - JVB_COLIBRI_PORT=${JVB_COLIBRI_PORT}
+      - JVB_STUN_KEEP_ALIVE_INTERVAL=10000 
+      - JVB_MAX_INACTIVE_ENDPOINTS=0
+      - JVB_COLIBRI_WS_MAX_INACTIVITY=3600
+      - JVB_STUN_SERVERS=stun.l.google.com:19302
+      - JVB_ICE_MAX_RETRIES=5
+      - JVB_ENABLE_APIS=rest,colibri
+      - JVB_ADVERTISE_IP=13.200.180.164
+      - JVB_COLIBRI_PORT=9090
+      - ENABLE_TURN=1
+
+
     depends_on:
       - prosody
     networks:
