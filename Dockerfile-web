@@ -5,6 +5,7 @@ FROM jitsi/web:stable
 COPY ./jitsi-meet/css/all.css /usr/share/jitsi-meet/css/all.css
 COPY ./jitsi-meet/images/logo.png /usr/share/jitsi-meet/images/logo.png
 COPY ./jitsi-meet/interface_config.js /usr/share/jitsi-meet/interface_config.js
+COPY ./jitsi-meet/index.html /usr/share/jitsi-meet/index.html
 # If you have extra libs or scripts, copy them too:
 # COPY ./jitsi-meet/libs/custom-face-api.js /usr/share/jitsi-meet/libs/custom-face-api.js
 
@@ -12,7 +13,8 @@ COPY ./jitsi-meet/interface_config.js /usr/share/jitsi-meet/interface_config.js
 USER root
 RUN chmod -R 644 /usr/share/jitsi-meet/css/all.css \
  && chmod 644 /usr/share/jitsi-meet/images/logo.png \
- && chmod 644 /usr/share/jitsi-meet/interface_config.js
+&& chmod 644 /usr/share/jitsi-meet/interface_config.js
+
 
 # revert to default user (if needed by base image)
 USER 1000

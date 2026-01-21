@@ -1,22 +1,46 @@
 <html>
 <head>
-    <!--#include virtual="/base.html" -->
     <link rel="stylesheet" href="css/all.css"/>
-    <!--#include virtual="/title.html" -->
-    <script><!--#include virtual="/interface_config.js" --></script>
-    <script src="static/close.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #000; /* black background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #fff; /* white text */
+            text-align: center;
+        }
+
+        .message-container {
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .main-message {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .hint-message {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
-    <div class="redirectPageMessage">
-        <div class="thanks-msg">
-            <p id="thanksMessage"></p>
+    <div class="message-container">
+        <div class="main-message">
+            Thanks for using EADC
         </div>
-        <div class="hint-msg">
-            <p>
-                <span id="hintQuestion">Did you know?</span>
-                <span class="hint-msg__holder" id="hintMessage"></span>
-            </p>
-            <div class="happy-software"></div>
+
+        <div class="hint-message">
+            We appreciate your time. Have a great day!
         </div>
     </div>
 </body>

@@ -9,9 +9,17 @@
  */
 
 var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+    APP_NAME: 'Talent Abundance', // your custom name
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+
+    SHOW_WELCOME_PAGE: false,
+    RECENT_LIST_ENABLED: false,
+    DISPLAY_WELCOME_FOOTER: false,
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+    DISPLAY_WELCOME_PAGE_CONTENT: false,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+    DEFAULT_WELCOME_PAGE_LOGO_URL: '',
 
     /**
      * A UX mode where the last screen share participant is automatically
@@ -22,12 +30,12 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-    BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: 'https://talent-abundance.com',
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
 
     DEFAULT_BACKGROUND: '#040404',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
+    // DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/logo.png',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -55,10 +63,10 @@ var interfaceConfig = {
      */
     DISABLE_VIDEO_BACKGROUND: false,
 
-    DISPLAY_WELCOME_FOOTER: true,
-    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
-    DISPLAY_WELCOME_PAGE_CONTENT: false,
-    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+    // DISPLAY_WELCOME_FOOTER: true,
+    // DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+    // DISPLAY_WELCOME_PAGE_CONTENT: false,
+    // DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
 
@@ -100,14 +108,14 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'Talent Abundance',
 
     /**
      * If true, will display recent list
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true,
+    // RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds', 'more' ],
@@ -118,7 +126,10 @@ var interfaceConfig = {
      */
     // SHARING_FEATURES: ['email', 'url', 'dial-in', 'embed'],
 
-    SHOW_BRAND_WATERMARK: false,
+     SHOW_JITSI_WATERMARK: false,
+    SHOW_POWERED_BY: false,
+    SHOW_BRAND_WATERMARK: true,
+    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 
     /**
      * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
@@ -127,9 +138,9 @@ var interfaceConfig = {
      */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
-    SHOW_JITSI_WATERMARK: true,
-    SHOW_POWERED_BY: false,
-    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+  
+    
+ 
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
@@ -220,6 +231,7 @@ var interfaceConfig = {
 
     // Please use defaultLogoUrl from config.js
     // DEFAULT_LOGO_URL: 'images/watermark.svg',
+    DEFAULT_LOGO_URL: 'images/logo.png',  // custom logo file
 
     // Please use defaultRemoteDisplayName from config.js
     // DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',

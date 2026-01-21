@@ -1,0 +1,27 @@
+# Stage 1: build luajwtjitsi
+FROM jitsi/prosody:stable AS builder
+
+USER root
+
+# Install only necessary build dependencies
+RUN apt-get update && \
+    apt-get install -y lua5.4-dev luarocks libssl-dev git && \
+    rm -rf /var/lib/apt/lists/*
+
+
+
+# Stage 2: final image
+FROM jitsi/prosody:stable
+
+USER root
+
+# Copy only the built Lua modules
+COPY --from=builder /usr/local /usr/local
+# COPY custom-prosody-conf/jitsi-meet.cfg.lua /config/conf.d/jitsi-meet.cfg.lua
+
+# Copy custom Prosody config & plugins
+# COPY custom-prosody-conf/jitsi-meet.cfg.lua /config/conf.d/jitsi-meet.cfg.lua
+# COPY prosody-plugins-custom /prosody-plugins-custom
+# RUN chown -R prosody:prosody /prosody-plugins-custom
+
+USER prosody

@@ -29,5 +29,10 @@ var config = {
     enableLipSync: true,
     enableRemb: true,
     hiddenDomain: 'recorder.meet.jitsi', // if using recording
-    startAudioOnly: false
+    startAudioOnly: false,
+
+    closePage: 'static/close2.html',
 };
+
+config.enableClosePage = true;
+config.closePageUrl = 'https://talent-abundance.com'

@@ -1,0 +1,1 @@
+ls -l /usr/share/jitsi-meet/index.html

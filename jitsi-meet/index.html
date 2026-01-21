@@ -16,8 +16,28 @@
     <script src="libs/app.bundle.min.js?v=8676"></script>
 
     <!-- Your custom face recognition script -->
-    <script defer src="libs/custom-face-api.js"></script>
+    <!-- <script defer src="libs/custom-face-api.js"></script> -->
+     <script src="libs/redirect-on-exit.js?v=1"></script>
 
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Function to remove duplicate or right-side watermarks
+  const cleanWatermarks = () => {
+    const leftMarks = document.querySelectorAll('.watermark.leftwatermark');
+    leftMarks.forEach((el, i) => {
+      if (i > 0) el.remove(); // keep only the first
+    });
+    document.querySelectorAll('.watermark.rightwatermark').forEach(el => el.remove());
+  };
+
+  // Initial cleanup
+  cleanWatermarks();
+
+  // Create a single observer
+  const observer = new MutationObserver(() => cleanWatermarks());
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+</script>
     <script>
         function contextRoot(pathname) {
             const contextRootEndIndex = pathname.lastIndexOf('/');
@@ -221,3 +241,4 @@
     <div id="react" role="main"></div>
   </body>
 </html>
+<!-- new updated one -->

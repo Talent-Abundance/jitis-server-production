@@ -14,7 +14,8 @@ services:
       - ${CONFIG}/web:/config:Z
       - ./custom-config/config.js:/usr/share/jitsi-meet/config.js:ro
       - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
-      # OPTIONAL (dev only): mount jitsi-meet for live edits - comment out for production
+      # - ./jitsi-meet/interface_config.js:/defaults/interface_config.js:ro
+      - ./jitsi-meet/interface_config.js:/usr/share/jitsi-meet/interface_config.js:ro
       # - ./jitsi-meet:/usr/share/jitsi-meet:Z
     environment:
       - ENABLE_XMPP_WEBSOCKET=${ENABLE_XMPP_WEBSOCKET}
@@ -32,15 +33,28 @@ services:
       - jvb
 
   prosody:
-    image: jitsi/prosody:${JITSI_IMAGE_VERSION:-stable}
+    build:
+      context: .
+      dockerfile: Dockerfile-prosody
+    user: root
     restart: unless-stopped
     ports:
       - "5222:5222"
       - "5280:5280"
       - "5347:5347"
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+
+    
     volumes:
-      - ${CONFIG}/prosody:/config:Z
-      - ./prosody-plugins-custom:/prosody-plugins-custom:ro
+    # - ./config/prosody.cfg.lua:/config/prosody.cfg.lua
+    # - ./config/prosody/conf.d:/config/conf.d
+    - ./config/prosody/conf.d/meet.jitsi.cfg.lua:/config/conf.d/meet.jitsi.cfg.lua
+    - ./config/prosody/conf.d/assessments.v.talent-abundance.com.cfg.lua:/config/conf.d/assessments.v.talent-abundance.com.cfg.lua
+    - ./config/prosody/certs:/config/prosody/certs
+    # # - ./config/prosody/conf.d/jitsi-meet.cfg.lua:/config/conf.d/jitsi-meet.cfg.lua:ro
+    - ./prosody-plugins-custom:/prosody-plugins-custom
+
     environment:
       - ENABLE_AUTH=${ENABLE_AUTH}
       - ENABLE_GUESTS=${ENABLE_GUESTS}
@@ -98,6 +112,8 @@ services:
       - "8081:8080"
     volumes:
       - ${CONFIG}/jvb:/config:Z
+      - /home/ubuntu/jitsi-production-001/config/jvb/sip-communicator.properties:/config/sip-communicator.properties:Z
+
       # - /home/ubuntu/jitsi-production-001/config/jvb:/config:Z
     environment:
       - JVB_AUTH_USER=${JVB_AUTH_USER}
@@ -108,6 +124,10 @@ services:
       - JVB_COLIBRI_PORT=${JVB_COLIBRI_PORT}
       - JVB_STUN_KEEP_ALIVE_INTERVAL=10000 
       - JVB_MAX_INACTIVE_ENDPOINTS=0
+      - JVB_ENABLE_OCTO=true
+      - JVB_OCTO_BIND_ADDRESS=0.0.0.0
+      - JVB_OCTO_PUBLIC_ADDRESS=13.200.180.164   # Your public EC2 IP
+      - JVB_OCTO_REGION=region1                  # You can name it anything
       - JVB_COLIBRI_WS_MAX_INACTIVITY=3600
       - JVB_STUN_SERVERS=stun.l.google.com:19302
       - JVB_ICE_MAX_RETRIES=5

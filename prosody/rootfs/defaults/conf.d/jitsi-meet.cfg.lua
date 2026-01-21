@@ -287,6 +287,8 @@ Component "{{ $XMPP_MUC_DOMAIN }}" "muc"
     modules_enabled = {
         "muc_hide_all";
         "muc_meeting_id";
+        "token_verification";       -- your mod_token_verification.lua
+        "muc_token_roles";   
         {{ if .Env.XMPP_MUC_MODULES -}}
         "{{ join "\";\n        \"" (splitList "," .Env.XMPP_MUC_MODULES | compact) }}";
         {{ end -}}
