@@ -14,9 +14,7 @@ services:
       - ${CONFIG}/web:/config:Z
       - ./custom-config/config.js:/usr/share/jitsi-meet/config.js:ro
       - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
-      # - ./jitsi-meet/interface_config.js:/defaults/interface_config.js:ro
       - ./jitsi-meet/interface_config.js:/usr/share/jitsi-meet/interface_config.js:ro
-      # - ./jitsi-meet:/usr/share/jitsi-meet:Z
     environment:
       - ENABLE_XMPP_WEBSOCKET=${ENABLE_XMPP_WEBSOCKET}
       - ENABLE_AUTH=${ENABLE_AUTH}
@@ -44,20 +42,15 @@ services:
       - "5347:5347"
       - "3478:3478/udp"
       - "3478:3478/tcp"
-
-    
     volumes:
-    # - ./config/prosody.cfg.lua:/config/prosody.cfg.lua
-    # - ./config/prosody/conf.d:/config/conf.d
-    - ./config/prosody/conf.d/meet.jitsi.cfg.lua:/config/conf.d/meet.jitsi.cfg.lua
-    - ./config/prosody/conf.d/assessments.v.talent-abundance.com.cfg.lua:/config/conf.d/assessments.v.talent-abundance.com.cfg.lua
-    - ./config/prosody/certs:/config/prosody/certs
-    # # - ./config/prosody/conf.d/jitsi-meet.cfg.lua:/config/conf.d/jitsi-meet.cfg.lua:ro
-    - ./prosody-plugins-custom:/prosody-plugins-custom
-
+      - ./config/prosody/conf.d/meet.jitsi.cfg.lua:/config/conf.d/meet.jitsi.cfg.lua
+      - ./config/prosody/conf.d/assessments.v.talent-abundance.com.cfg.lua:/config/conf.d/assessments.v.talent-abundance.com.cfg.lua
+      - ./config/prosody/certs:/config/prosody/certs
+      - ./prosody-plugins-custom:/prosody-plugins-custom
     environment:
       - ENABLE_AUTH=${ENABLE_AUTH}
       - ENABLE_GUESTS=${ENABLE_GUESTS}
+      - ENABLE_JWT_REGION=true
       - AUTH_TYPE=${AUTH_TYPE}
       - XMPP_DOMAIN=${XMPP_DOMAIN}
       - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN}
@@ -87,18 +80,19 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ${CONFIG}/jicofo:/config:Z
+      - /home/ubuntu/jitsi-production-001/config/jicofo:/config
     environment:
       - JICOFO_AUTH_USER=${JICOFO_AUTH_USER}
       - JICOFO_AUTH_PASSWORD=${JICOFO_AUTH_PASSWORD}
       - JICOFO_AUTH_DOMAIN=${JICOFO_AUTH_DOMAIN}
       - ENABLE_AUTH=${ENABLE_AUTH}
       - AUTH_TYPE=${AUTH_TYPE}
-
       - JICOFO_ENABLE_HEALTH_CHECKS=true
       - JICOFO_MAX_INACTIVE_ENDPOINTS=30
       - JICOFO_MAX_INACTIVE_SECONDS=300
       - JICOFO_BRIDGE_SELECTION_TIMEOUT=10000
+      - JICOFO_JAVA_OPTS=-Djitsi.jicofo.BridgeSelector.strategy=org.jitsi.jicofo.bridge.RegionBasedBridgeSelectionStrategy -Djitsi.jicofo.RegionFromJwt=true
+      - JICOFO_REGION_FROM_JWT=true
     depends_on:
       - prosody
     networks:
@@ -113,30 +107,30 @@ services:
     volumes:
       - ${CONFIG}/jvb:/config:Z
       - /home/ubuntu/jitsi-production-001/config/jvb/sip-communicator.properties:/config/sip-communicator.properties:Z
-
-      # - /home/ubuntu/jitsi-production-001/config/jvb:/config:Z
     environment:
       - JVB_AUTH_USER=${JVB_AUTH_USER}
       - JVB_AUTH_PASSWORD=${JVB_AUTH_PASSWORD}
-      # - JVB_STUN_SERVERS=${JVB_STUN_SERVERS}
       - JVB_AUTH_DOMAIN=${JVB_AUTH_DOMAIN}
       - JVB_PORT=${JVB_PORT}
       - JVB_COLIBRI_PORT=${JVB_COLIBRI_PORT}
-      - JVB_STUN_KEEP_ALIVE_INTERVAL=10000 
+      - JVB_STUN_KEEP_ALIVE_INTERVAL=10000
       - JVB_MAX_INACTIVE_ENDPOINTS=0
       - JVB_ENABLE_OCTO=true
+      - JVB_REGION=in
+      - JVB_ENABLE_RELAY=true
+      - JVB_RELAY_REGION=in
+      - JVB_RELAY_ID=in1
+      - ENABLE_OCTO=true
+      - JVB_OCTO_REGION=in
+      - JVB_OCTO_RELAY_ID=in1
       - JVB_OCTO_BIND_ADDRESS=0.0.0.0
-      - JVB_OCTO_PUBLIC_ADDRESS=13.200.180.164   # Your public EC2 IP
-      - JVB_OCTO_REGION=region1                  # You can name it anything
+      - JVB_OCTO_PUBLIC_ADDRESS=13.200.180.164
       - JVB_COLIBRI_WS_MAX_INACTIVITY=3600
       - JVB_STUN_SERVERS=stun.l.google.com:19302
       - JVB_ICE_MAX_RETRIES=5
       - JVB_ENABLE_APIS=rest,colibri
       - JVB_ADVERTISE_IP=13.200.180.164
-      - JVB_COLIBRI_PORT=9090
       - ENABLE_TURN=1
-
-
     depends_on:
       - prosody
     networks:

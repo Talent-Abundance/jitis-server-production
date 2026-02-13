@@ -4,6 +4,8 @@ VirtualHost "meet.jitsi"
     app_secret = "ba48cba3ed5c8ac1c2750571cc1588a099c3518dcae25ad1de3193facde926e1"
     allow_empty_token = false
     enable_domain_verification = false
+    asap_accepted_issuers = { "eewev03r3-rj" }
+    asap_accepted_audiences = { "eewev03r3-rj" }
 
     ssl = {
         key = "/config/certs/meet.jitsi.key";
@@ -13,6 +15,7 @@ VirtualHost "meet.jitsi"
     modules_enabled = {
         "bosh";
         "features_identity";
+	"token_verification";
     }
 
 -- MUC component
@@ -32,4 +35,5 @@ Component "muc.meet.jitsi" "muc"
         "muc_password_whitelist"; -- allow certain JIDs to bypass passwords
         "token_verification";
         "token_affiliation";      -- your custom module for assigning affiliations
-    }
+	"token_region";           
+ }

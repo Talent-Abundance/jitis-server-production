@@ -1,0 +1,1 @@
+-Djitsi.jicofo.BridgeSelector.strategy=org.jitsi.jicofo.bridge.RegionBasedBridgeSelectionStrategy
