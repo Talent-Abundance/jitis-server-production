@@ -1,8 +1,10 @@
+
 VirtualHost "meet.jitsi"
     authentication = "token"  -- still use token to allow JWT-based join
     app_id = "eewev03r3-rj"   -- required for the JWT plugin to validate
     app_secret = "ba48cba3ed5c8ac1c2750571cc1588a099c3518dcae25ad1de3193facde926e1"
     allow_empty_token = false
+    region_from_jwt = false
     enable_domain_verification = false
     asap_accepted_issuers = { "eewev03r3-rj" }
     asap_accepted_audiences = { "eewev03r3-rj" }
@@ -14,8 +16,11 @@ VirtualHost "meet.jitsi"
 
     modules_enabled = {
         "bosh";
+	"websocket";
         "features_identity";
 	"token_verification";
+	"jitsi_session";
+        "region_from_header";
     }
 
 -- MUC component
@@ -33,7 +38,8 @@ Component "muc.meet.jitsi" "muc"
         "muc_meeting_id";         -- assign meeting IDs to rooms
         "muc_domain_mapper";      -- map domains for MUCs
         "muc_password_whitelist"; -- allow certain JIDs to bypass passwords
+	"jiconop";
         "token_verification";
         "token_affiliation";      -- your custom module for assigning affiliations
-	"token_region";           
+	       
  }

@@ -75,7 +75,8 @@ services:
           - ${XMPP_SERVER:-xmpp.meet.jitsi}
 
   jicofo:
-    image: jitsi/jicofo:${JITSI_IMAGE_VERSION:-stable}
+    # image: jitsi/jicofo:stable
+    image: jitsi/jicofo:jicofo-1.0-1170-1
     restart: unless-stopped
     ports:
       - "8888:8888"
@@ -90,47 +91,37 @@ services:
       - JICOFO_ENABLE_HEALTH_CHECKS=true
       - JICOFO_MAX_INACTIVE_ENDPOINTS=30
       - JICOFO_MAX_INACTIVE_SECONDS=300
+      - JICOFO_ENABLE_OCTO=true
       - JICOFO_BRIDGE_SELECTION_TIMEOUT=10000
-      - JICOFO_JAVA_OPTS=-Djitsi.jicofo.BridgeSelector.strategy=org.jitsi.jicofo.bridge.RegionBasedBridgeSelectionStrategy -Djitsi.jicofo.RegionFromJwt=true
-      - JICOFO_REGION_FROM_JWT=true
+      
+      
+
     depends_on:
       - prosody
     networks:
       - meet.jitsi
-
   jvb:
-    image: jitsi/jvb:${JITSI_IMAGE_VERSION:-stable}
+    image: jitsi/jvb:stable
     restart: unless-stopped
     ports:
       - "10000:10000/udp"
       - "8081:8080"
+      - "4096:4096/udp"
     volumes:
-      - ${CONFIG}/jvb:/config:Z
-      - /home/ubuntu/jitsi-production-001/config/jvb/sip-communicator.properties:/config/sip-communicator.properties:Z
+      - /home/ubuntu/jitsi-production-001/config/jvb:/config:Z
     environment:
       - JVB_AUTH_USER=${JVB_AUTH_USER}
       - JVB_AUTH_PASSWORD=${JVB_AUTH_PASSWORD}
       - JVB_AUTH_DOMAIN=${JVB_AUTH_DOMAIN}
-      - JVB_PORT=${JVB_PORT}
-      - JVB_COLIBRI_PORT=${JVB_COLIBRI_PORT}
-      - JVB_STUN_KEEP_ALIVE_INTERVAL=10000
-      - JVB_MAX_INACTIVE_ENDPOINTS=0
-      - JVB_ENABLE_OCTO=true
+
       - JVB_REGION=in
-      - JVB_ENABLE_RELAY=true
-      - JVB_RELAY_REGION=in
-      - JVB_RELAY_ID=in1
-      - ENABLE_OCTO=true
-      - JVB_OCTO_REGION=in
+      - JVB_ENABLE_OCTO=true
       - JVB_OCTO_RELAY_ID=in1
+
       - JVB_OCTO_BIND_ADDRESS=0.0.0.0
       - JVB_OCTO_PUBLIC_ADDRESS=13.200.180.164
-      - JVB_COLIBRI_WS_MAX_INACTIVITY=3600
-      - JVB_STUN_SERVERS=stun.l.google.com:19302
-      - JVB_ICE_MAX_RETRIES=5
-      - JVB_ENABLE_APIS=rest,colibri
+
       - JVB_ADVERTISE_IP=13.200.180.164
-      - ENABLE_TURN=1
     depends_on:
       - prosody
     networks:

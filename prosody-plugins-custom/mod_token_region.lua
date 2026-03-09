@@ -1,36 +1,64 @@
-local jwt = require "luajwt" -- make sure luajwt is installed
-local json = require "cjson"
+local json = require "util.json"
+local st = require "util.stanza"
+local mime = require "mime"
 
-module:hook("muc-occupant-joined", function(event)
-    
-    local room = event.room
-    local occupant = event.occupant
-
-    local token = occupant:get_session():get("token")
-    if token then
-        local ok, claims = pcall(function()
-            return jwt.decode(token, "ba48cba3ed5c8ac1c2750571cc1588a099c3518dcae25ad1de3193facde926e1", true) -- HS256
-        end)
-
-        if ok and claims.context and claims.context.user then
-            local user = claims.context.user
-
-            -- Set region if it exists
-            if user.region then
-                occupant:set_property("region", user.region)
-                module:log("info", "Occupant %s joined room %s with region=%s", occupant.jid, room.jid, tostring(user.region))
-            else
-                module:log("warn", "Occupant %s joined room %s but token has no region", occupant.jid, room.jid)
-            end
-
-            -- Optional: log affiliation for comparison
-            if user.affiliation then
-                module:log("info", "Occupant %s affiliation=%s", occupant.jid, tostring(user.affiliation))
-            end
-        else
-            module:log("warn", "Failed to decode token or missing user/context for occupant %s", occupant.jid)
-        end
-    else
-        module:log("warn", "No token found for occupant %s in room %s", occupant.jid, room.jid)
+-- Function to decode base64url (JWT payload)
+local function base64url_decode(input)
+    input = input:gsub("-", "+"):gsub("_", "/")
+    local padding = #input % 4
+    if padding > 0 then
+        input = input .. string.rep("=", 4 - padding)
     end
-end)
+    return mime.unb64(input)
+end
+
+-- Hook for every occupant joining a MUC, HIGH priority
+module:hook("muc-occupant-pre-join", function(event)
+    local session = event.origin
+    local occupant = event.occupant
+    local presence = event.stanza
+
+    -- Step 1: extract JWT from URL if session.auth_token is nil
+    if not session.auth_token then
+        local url_jwt = session.jitsi_web_query and session.jitsi_web_query.jwt
+        if url_jwt then
+            session.auth_token = url_jwt
+            module:log("info", "Injected JWT from URL into session.auth_token")
+        end
+    end
+
+    -- Step 2: if still missing, warn and skip
+    if not session or not session.auth_token then
+        module:log("warn", "No auth_token in session for occupant: %s", tostring(occupant.nick))
+        return
+    end
+
+    -- Step 3: decode JWT
+    local header, payload, signature = session.auth_token:match("([^%.]+)%.([^%.]+)%.([^%.]+)")
+    if not payload then
+        module:log("warn", "Invalid JWT format for occupant: %s", tostring(occupant.nick))
+        return
+    end
+
+    local decoded = base64url_decode(payload)
+    local data = json.decode(decoded)
+
+    -- Step 4: determine region based on affiliation
+    local region = "in"  -- default region
+    if data and data.context and data.context.user and data.context.user.affiliation then
+        local affiliation = data.context.user.affiliation:lower()
+        if affiliation == "owner" then
+            region = "bh"  -- owner gets Bahrain region
+        end
+    end
+
+    -- Step 5: log for debugging
+    module:log("info", "Assigning region '%s' for occupant %s", region, tostring(occupant.nick))
+
+    -- Step 6: inject region into presence
+    presence:add_child(
+    st.stanza("jitsi_participant_region", {
+        xmlns = "http://jitsi.org/jitmeet"
+    }):text(region)
+)
+end, 100)  -- HIGH priority to run before other modules
