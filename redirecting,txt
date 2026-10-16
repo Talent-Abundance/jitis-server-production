@@ -1,0 +1,2 @@
+config.enableClosePage = true;
+config.closePageUrl = 'https://talent-abundance.com';

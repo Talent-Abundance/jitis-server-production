@@ -49,6 +49,8 @@ VirtualHost "meet.jitsi"
     allow_empty_token = false
     
     enable_domain_verification = false
+    turncredentials_secret = "MyTurnSecret123"
+    turncredentials_host = "13.200.180.164"
   
 
     ssl = {
@@ -61,6 +63,7 @@ VirtualHost "meet.jitsi"
         
         "websocket";
         "smacks"; -- XEP-0198: Stream Management
+        "turncredentials";
         
         "conference_duration";
         

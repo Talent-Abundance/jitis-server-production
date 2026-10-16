@@ -10,6 +10,12 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"   # Host port 8080 -> container port 80
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
       - ${CONFIG}/web:/config:Z
       - ./custom-config/config.js:/usr/share/jitsi-meet/config.js:ro
@@ -31,22 +37,21 @@ services:
       - jvb
 
   prosody:
-    build:
-      context: .
-      dockerfile: Dockerfile-prosody
+    image: jitsi/prosody:stable
     user: root
     restart: unless-stopped
+
     ports:
       - "5222:5222"
       - "5280:5280"
       - "5347:5347"
-      - "3478:3478/udp"
-      - "3478:3478/tcp"
+
     volumes:
       - ./config/prosody/conf.d/meet.jitsi.cfg.lua:/config/conf.d/meet.jitsi.cfg.lua
       - ./config/prosody/conf.d/assessments.v.talent-abundance.com.cfg.lua:/config/conf.d/assessments.v.talent-abundance.com.cfg.lua
       - ./config/prosody/certs:/config/prosody/certs
       - ./prosody-plugins-custom:/prosody-plugins-custom
+
     environment:
       - ENABLE_AUTH=${ENABLE_AUTH}
       - ENABLE_GUESTS=${ENABLE_GUESTS}
@@ -68,6 +73,7 @@ services:
       - JWT_ALLOW_EMPTY=${JWT_ALLOW_EMPTY}
       - JWT_AUTH_TYPE=${JWT_AUTH_TYPE}
       - JWT_CLAIM_MODERATOR=${JWT_CLAIM_MODERATOR}
+
     networks:
       meet.jitsi:
         aliases:
@@ -105,6 +111,7 @@ services:
     restart: unless-stopped
     ports:
       - "10000:10000/udp"
+      - "4443:4443/tcp"
       - "8081:8080"
       - "4096:4096/udp"
     volumes:
@@ -113,6 +120,9 @@ services:
       - JVB_AUTH_USER=${JVB_AUTH_USER}
       - JVB_AUTH_PASSWORD=${JVB_AUTH_PASSWORD}
       - JVB_AUTH_DOMAIN=${JVB_AUTH_DOMAIN}
+
+      - JVB_TCP_HARVESTER_DISABLED=${JVB_TCP_HARVESTER_DISABLED}
+      - JVB_TCP_PORT=${JVB_TCP_PORT}
 
       - JVB_REGION=in
       - JVB_ENABLE_OCTO=true

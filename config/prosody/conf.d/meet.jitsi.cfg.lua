@@ -1,11 +1,13 @@
 
 VirtualHost "meet.jitsi"
-    authentication = "token"  -- still use token to allow JWT-based join
-    app_id = "eewev03r3-rj"   -- required for the JWT plugin to validate
+    authentication = "token"
+    app_id = "eewev03r3-rj"
     app_secret = "ba48cba3ed5c8ac1c2750571cc1588a099c3518dcae25ad1de3193facde926e1"
+
     allow_empty_token = false
     region_from_jwt = false
     enable_domain_verification = false
+
     asap_accepted_issuers = { "eewev03r3-rj" }
     asap_accepted_audiences = { "eewev03r3-rj" }
 
@@ -16,12 +18,42 @@ VirtualHost "meet.jitsi"
 
     modules_enabled = {
         "bosh";
-	"websocket";
+        "websocket";
+
+
+	"external_services";
+    	    
+
         "features_identity";
-	"token_verification";
-	"jitsi_session";
+        "token_verification";
+        "jitsi_session";
         "region_from_header";
     }
+
+    -- 🔥 THIS IS REQUIRED (YOU WERE MISSING THIS)
+    external_services = {
+    {
+        type = "turn",
+        transport = "udp",
+        host = "13.200.180.164",
+        port = 3478,
+        secret = "MyTurnSecret123"
+    },
+    {
+        type = "turn",
+        transport = "tcp",
+        host = "13.200.180.164",
+        port = 3478,
+        secret = "MyTurnSecret123"
+    },
+    {
+        type = "turn",
+        transport = "tcp",
+        host = "13.200.180.164",
+        port = 5349,
+        secret = "MyTurnSecret123"
+    }
+}
 
 -- MUC component
 Component "muc.meet.jitsi" "muc"
